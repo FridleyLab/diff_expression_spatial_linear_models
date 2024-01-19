@@ -9,3 +9,6 @@ analysis/*png
 analysis/*html
 analysis/*_cache
 analysis/site_libs
+data/ravi_2022_glioblastoma/UKF243_T_ST/*
+data/ravi_2022_glioblastoma/UKF275_T_ST/*
+code/diff_expr_hpcrun_spamm/data/*RDS

@@ -8,4 +8,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-This repository contains code to reproduce the figures in the manuscript entitled "Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models"
+This repository contains code to reproduce the figures in the manuscript entitled "Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models".
+
+Code presented in this website and used in pre-processing steps can be found [here](https://github.com/FridleyLab/diff_expression_spatial_linear_model).
