@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,4 +8,4 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+This repository contains code to reproduce the figures in the manuscript entitled "Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models"

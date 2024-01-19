@@ -7,4 +7,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-Describe your project.
+This repository contains code to reproduce the figures in the manuscript entitled "Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models". The contents of the repository are briefly detailed here:
+
+* `analysis/diff_expr_spatial_linear_models.Rmd`: Script to generate the figures presented in the manuscript.
+* `code/prepare_data_*`: Scripts to create STlist (spatialGE object) and list of genes x cluster combinations to run STdiff in an HPC environment.
+* `code/diff_expr_hpcrun_spamm/spatial_model_tests_spamm.R`: The STdiff algorithm, modified to be compatible with Slurm array job submission.
+* `code/diff_expr_hpcrun_spamm/srunslurm_hpc_stdiff_*`: Example Slurm scripts to submit model tests to an HPC environment.
+* `code/diff_expr_hpcrun_spamm/scompile_all_results.R`: An R script to compile into a table the results of the model tests.
