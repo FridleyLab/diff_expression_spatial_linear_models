@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Oscar E. Ospina, Alex C. Soupir, Roberto Manjarres-Betancur, Guillermo Gonzalez-Calderon, Xiaoqing Yu, Brooke L. Fridley" />
+
+
+<title>Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Spatial linear models for differential expression analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="diff_expr_spatial_linear_models.html">Analysis</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Differential gene expression analysis of
+spatial transcriptomic experiments using spatial mixed models</h1>
+<h4 class="author">Oscar E. Ospina, Alex C. Soupir, Roberto
+Manjarres-Betancur, Guillermo Gonzalez-Calderon, Xiaoqing Yu, Brooke L.
+Fridley</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-01-19
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>diff_expression_spatial_linear_models/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240118code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240118)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240118code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240118)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong65f9931">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> 65f9931
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrong65f9931"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version 65f9931.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    data/cosmx_smi_liver_nanostring/
+    Ignored:    data/cosmx_smi_lung_nsclc_nanostring/
+    Ignored:    data/geomx_spatial_organ_atlas_data/
+    Ignored:    data/maynard_2021_prefrontal_cortex/
+    Ignored:    data/ravi_2022_glioblastoma/
+    Ignored:    data/ravi_gbm_spata_objects/
+
+Untracked files:
+    Untracked:  .Rbuildignore
+    Untracked:  CITATION.md
+    Untracked:  LICENSE.md
+    Untracked:  code/diff_expr_hpcrun_spamm/
+    Untracked:  code/gene_set_enrichment.R
+    Untracked:  code/prepare_data_hpcrun_visium_maynardbrain.R
+    Untracked:  code/prepare_data_hpcrun_visium_raviglioblastoma.R
+    Untracked:  code/prepare_data_hpcrun_visium_raviglioblastoma_hallmark_gsea.R
+    Untracked:  code/prepare_data_sets_hpcrun_cosmxsmi_liver.R
+    Untracked:  code/prepare_data_sets_hpcrun_cosmxsmi_lungcancer.R
+    Untracked:  code/prepare_data_sets_hpcrun_geomx_soabrain.R
+    Untracked:  code/prepare_data_sets_hpcrun_geomx_soaliver.R
+    Untracked:  data/fgsea_results.RDS
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/_site.yml
+    Deleted:    analysis/license.Rmd
+    Deleted:    code/README.md
+    Deleted:    data/README.md
+    Deleted:    output/README.md
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<p>Spatial transcriptomics (ST) assays represent a revolution in the way
+the architecture of tissues is studied, by allowing for the exploration
+of cells in their spatial context. A common element in the analysis is
+the delineation of tissue domains or “niches” followed by the detection
+of differentially expressed genes to infer the biological identity of
+the tissue domains or cell types. However, many studies approach
+differential expression analysis by using statistical approaches often
+applied in the analysis of non-spatial scRNA data (e.g., two-sample
+t-tests, Wilcoxon rank sum test), hence neglecting the spatial
+dependency observed in ST data. In this study, we show that applying
+linear mixed models with spatial correlation structures using spatial
+random effects effectively accounts for the spatial autocorrelation and
+reduces inflation of type-I error rate that is observed in non-spatial
+based differential expression testing. We also show that spatial linear
+models with an exponential correlation structure provide a better fit to
+the ST data as compared to non-spatial models, particularly for
+spatially resolved technologies that quantify expression at finer scales
+(i.e., single-cell resolution).</p>
+<p>This workflow presents the code used to generate the results for the
+manuscript entitled “Differential gene expression analysis of spatial
+transcriptomic experiments using spatial mixed models”. Some of the
+files used to generate these results are included in this repository.
+However, raw data and heavy files are not included. Those files can be
+generated again using the scripts in the <code>code</code>
+directory.</p>
+<p>The <code>spatialGE</code> software includes the <code>STdiff</code>
+function to test for differentially expressed genes using spatial
+covariance structures. In this paper, the <code>STdiff</code> function
+was not used. Instead, the script of the function was modified to enable
+execution of Slurm array jobs in a high performance computing (HPC)
+facility. Nonetheless, the algorithm used here and in
+<code>STdiff</code> are the same, and users are encouraged to run STdiff
+using the <code>spatialGE</code> software.</p>
+<p>Load <code>tidyverse</code> to handle the compiled STdiff
+results.</p>
+<pre class="r"><code>library(&#39;tidyverse&#39;)</code></pre>
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(&#39;spatialGE&#39;)</code></pre>
+<p>Differentially expressed genes were tested in a random set of genes
+from the glioblastoma (GBM) Visium data set (Ravi et al. 2022). In
+addition, the same data set was used to run a gene set enrichment
+analysis (GSEA) ranking a different selection of genes based on the
+models’ p-values. Assessment of the power of spatial models was done
+only on the randomly selected genes, and those genes should be extracted
+from the results.</p>
+<pre class="r"><code># Read randomly selected genes (to distinguish from Hallmark genes tested for GSEA)
+fp = &#39;code/diff_expr_hpcrun_spamm/data/visium_gene_meta_combo_raviglioblastoma.txt&#39;
+rand_genes = read_delim(fp, show_col_types=F, col_names=F)
+
+rm(fp) # Clean env</code></pre>
+<p>Read the results from the non-spatial and spatial (STdiff) model
+tests. The table to be read in this section results from running the
+<code>compile_all_results.R</code> script, which reads the individual
+model values generated during the HPC run.</p>
+<pre class="r"><code># Read table containing statistics derived from all models.
+fp = &#39;code/diff_expr_hpcrun_spamm/code/spatial_test_all_compiled.csv&#39;
+df_res = read_delim(fp, delim=&#39;,&#39;, show_col_types=F) %&gt;%
+  mutate(st_tech=recode(st_tech, smi=&#39;cosmxsmi&#39;)) %&gt;%
+  mutate(st_tech=factor(st_tech, levels=c(&#39;geomx&#39;, &#39;visium&#39;, &#39;cosmxsmi&#39;)))
+
+rm(fp) # Clean env
+
+# Remove results from genes selected for Hallmark tests and only for GBM Visium samples
+df_res = df_res %&gt;%
+  filter( !(sample == &quot;UKF243&quot; &amp; !(gene %in% unique(rand_genes[[&#39;X1&#39;]][rand_genes[[&#39;X4&#39;]] == &quot;UKF243&quot;]))) ) %&gt;%
+  filter( !(sample == &quot;UKF275&quot; &amp; !(gene %in% unique(rand_genes[[&#39;X1&#39;]][rand_genes[[&#39;X4&#39;]] == &quot;UKF275&quot;]))) )
+
+rm(rand_genes) # Clean env
+
+# Create color palette
+col_pal = list(
+  geomx=c(hu_brain_001=&quot;#AE76A3&quot;, hu_brain_004a=&quot;#CAE0AB&quot;, hu_liver_001=&quot;#1965B0&quot;, hu_liver_002=&quot;#DC050C&quot;),
+  cosmxsmi=c(CancerousLiver_366=&quot;#882E72&quot;, NormalLiver_174=&quot;#E8601C&quot;, lung5rep3_fov28=&quot;#4EB265&quot;, lung6_fov20=&quot;#7BAFDE&quot;),
+  visium=c(`151507`=&quot;gold3&quot;, `151673`=&quot;#5289C7&quot;, UKF243=&quot;#F4A736&quot;, UKF275=&quot;#D1BBD7&quot;)
+)</code></pre>
+<p>Identify genes with average expression (across spots/cells) higher or
+lower than the median expression value.</p>
+<pre class="r"><code># Get average gene expression from STlist
+## NOTE: This is done to separate high/low expression genes as it affects the power of spatial models
+fps = list.files(&#39;code/diff_expr_hpcrun_spamm/data/&#39;, pattern=&#39;RDS&#39;, full.names=T)
+gene_meta_df = tibble()
+for(i in fps){
+  plt = str_extract(i, &#39;geomx|smi|visium&#39;)
+  stlist_obj = readRDS(i)
+  for(samplename in names(stlist_obj@gene_meta)){
+    # Calculate median to classify genes
+    genes_tmp = stlist_obj@gene_meta[[samplename]] %&gt;%
+      filter(gene %in% df_res[[&#39;gene&#39;]][ df_res[[&#39;sample&#39;]] == samplename ]) 
+    
+    q50 = genes_tmp %&gt;% select(gene_mean) %&gt;% unlist() %&gt;% quantile(., probs=0.5) %&gt;% as.vector()
+    
+    gene_meta_tmp = genes_tmp %&gt;% 
+      add_column(st_tech=plt, .before=1) %&gt;%
+      add_column(sample=samplename, .after=1) %&gt;%
+      mutate(gene_mean_cat=case_when(gene_mean &gt;= q50 ~ &#39;high&#39;, TRUE ~ &#39;low&#39;) %&gt;%
+               factor(., level=c(&#39;low&#39;, &#39;high&#39;)))
+    
+    gene_meta_df = bind_rows(gene_meta_df, gene_meta_tmp)
+    
+    rm(genes_tmp, gene_meta_tmp, q50) # Clean env
+  }
+  rm(plt, stlist_obj) # Clean env
+}
+
+# Replace smi for cosmxsmi
+gene_meta_df = gene_meta_df %&gt;%
+  mutate(st_tech=recode(st_tech, smi=&#39;cosmxsmi&#39;))
+
+rm(fps) # Clean env</code></pre>
+<p>Ascertain which model presented better fit to the data. The model
+selection was done based on the Akaike Information Criterion (AIC).</p>
+<pre class="r"><code># Define which model (non-spatial or spatial) is better based on AIC
+df_res_aic = df_res %&gt;%
+  select(&quot;st_tech&quot;, &quot;sample&quot;, &quot;gene&quot;, &quot;cluster&quot;, &quot;non_sp_aic&quot;, &quot;sp_aic&quot;) %&gt;%
+  pivot_longer(cols=c(&quot;non_sp_aic&quot;, &quot;sp_aic&quot;), names_to=&#39;aic_type&#39;, values_to=&#39;aic&#39;) %&gt;%
+  group_by(st_tech, sample, gene, cluster) %&gt;%
+  summarize(best_model=aic_type[which.min(aic)]) %&gt;%
+  ungroup() %&gt;% 
+  mutate(best_model=recode(best_model, non_sp_aic=&#39;non_spatial&#39;, sp_aic=&#39;spatial&#39;)) %&gt;% 
+  left_join(., gene_meta_df %&gt;% select(c(&#39;st_tech&#39;, &#39;sample&#39;, &#39;gene&#39;, &#39;gene_mean_cat&#39;)), by=c(&#39;st_tech&#39;, &#39;sample&#39;, &#39;gene&#39;)) %&gt;%
+  group_by(st_tech, sample, best_model, gene_mean_cat) %&gt;%
+  summarize(n_tests=n()) %&gt;%
+  ungroup() %&gt;%
+  mutate(st_tech=factor(st_tech, levels=c(&quot;geomx&quot;, &quot;visium&quot;, &quot;cosmxsmi&quot;))) %&gt;%
+  mutate(sample_gene_mean_cat=paste0(sample, &#39;_&#39;, gene_mean_cat) %&gt;%
+           factor(., levels=c(&quot;hu_brain_001_low&quot;, &quot;hu_brain_001_high&quot;, &quot;hu_brain_004a_low&quot;, &quot;hu_brain_004a_high&quot;,
+                              &quot;hu_liver_001_low&quot;, &quot;hu_liver_001_high&quot;, &quot;hu_liver_002_low&quot; , &quot;hu_liver_002_high&quot;,
+                              &quot;151507_low&quot;, &quot;151507_high&quot;, &quot;151673_low&quot;, &quot;151673_high&quot;, 
+                              &quot;UKF243_low&quot;, &quot;UKF243_high&quot;, &quot;UKF275_low&quot;, &quot;UKF275_high&quot;,  
+                              &quot;CancerousLiver_366_low&quot;, &quot;CancerousLiver_366_high&quot;, &quot;NormalLiver_174_low&quot;, &quot;NormalLiver_174_high&quot;,
+                              &quot;lung5rep3_fov28_low&quot;, &quot;lung5rep3_fov28_high&quot;, &quot;lung6_fov20_low&quot;, &quot;lung6_fov20_high&quot;)))      </code></pre>
+<pre><code>`summarise()` has grouped output by &#39;st_tech&#39;, &#39;sample&#39;, &#39;gene&#39;. You can
+override using the `.groups` argument.
+`summarise()` has grouped output by &#39;st_tech&#39;, &#39;sample&#39;, &#39;best_model&#39;. You can
+override using the `.groups` argument.</code></pre>
+<pre class="r"><code># Calculate sum of tests to correctly place text labels on bar plot 
+for(i in unique(df_res_aic[[&#39;sample_gene_mean_cat&#39;]])){
+  sp_better = df_res_aic[[&#39;n_tests&#39;]][ df_res_aic[[&#39;sample_gene_mean_cat&#39;]] == i &amp; df_res_aic[[&#39;best_model&#39;]] == &#39;spatial&#39; ]
+  sumtest =  sum(df_res_aic[[&#39;n_tests&#39;]][ df_res_aic[[&#39;sample_gene_mean_cat&#39;]] == i ])
+  df_res_aic[[&#39;lab_pos&#39;]][ df_res_aic[[&#39;sample_gene_mean_cat&#39;]] == i &amp; df_res_aic[[&#39;best_model&#39;]] == &#39;spatial&#39;] = sp_better
+  df_res_aic[[&#39;lab_pos&#39;]][ df_res_aic[[&#39;sample_gene_mean_cat&#39;]] == i &amp; df_res_aic[[&#39;best_model&#39;]] == &#39;non_spatial&#39;] = sumtest
+  
+  rm(sumtest, sp_better) # Clean env
+}
+
+rm(gene_meta_df) # Clean env
+
+# Make plot
+p = ggplot(df_res_aic, aes(x=sample_gene_mean_cat, y=n_tests)) +
+  geom_bar(aes(fill=sample, alpha=best_model, color=sample), stat=&quot;identity&quot;, position=&#39;stack&#39;, size=0.5) +
+  geom_text(aes(label=n_tests, y=lab_pos), color=rep(c(&#39;gray40&#39;, &#39;gray40&#39;, &#39;black&#39;, &#39;black&#39;), 12), size=2) +
+  scale_color_manual(values=c(col_pal[[&#39;visium&#39;]], col_pal[[&#39;geomx&#39;]], col_pal[[&#39;cosmxsmi&#39;]])) +
+  scale_fill_manual(values=c(col_pal[[&#39;visium&#39;]], col_pal[[&#39;geomx&#39;]], col_pal[[&#39;cosmxsmi&#39;]])) +
+  scale_alpha_manual(values=c(spatial=1, non_spatial=0.3)) +
+  ggtitle(&#39;Number of tests with better fit according to AIC&#39;) +
+  xlab(&#39;Sample and gene expression category (high|low)&#39;) + ylab(&#39;Number of tests&#39;) +
+  guides(fill=guide_legend(override.aes=list(color=NULL), nrow=4, title=&#39;&#39;),
+         color=&#39;none&#39;,
+         alpha=guide_legend(override.aes=list(color=NA, fill=&quot;black&quot;), ncol=1, title=&#39;Best model\n(Lower AIC)&#39;)) +
+  theme(legend.position=&quot;bottom&quot;, axis.text.x=element_text(angle=45, vjust=1, hjust=1),
+        panel.background=element_rect(color=&#39;black&#39;, fill=NULL)) +
+  facet_wrap(~st_tech, scales=&#39;free&#39;, ncol=3)</code></pre>
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+generated.</code></pre>
+<pre class="r"><code>print(p)</code></pre>
+<p><img src="figure/diff_expr_spatial_linear_models.Rmd/compare_aic-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>To assess the level of significant p-value inflation, the
+log10(p-value) of each alternative (spatial/non-spatial) is compared for
+each gene x cluster combination.</p>
+<pre class="r"><code># Find larger p-value
+df_lower_pval = df_res %&gt;%
+  mutate(lower_p=case_when(p_val &gt; exp_p_val ~ &#39;non_spatial&#39;,
+                           p_val &lt; exp_p_val ~ &#39;spatial&#39;,
+                           p_val == exp_p_val ~ &#39;tie&#39;,
+                           TRUE ~ &#39;other&#39;))
+
+# Save number of p-values from spatial tests larger than p-values from non-spatial tests
+p_larger_sp = as.data.frame.matrix(table(df_lower_pval$sample, df_lower_pval$lower_p))
+p_larger_sp = p_larger_sp %&gt;% rownames_to_column(&#39;sample_name&#39;)
+
+# Create -log10 p-values scatterplot
+p = list()
+ntests = list()
+for(j in c(&#39;geomx&#39;, &#39;visium&#39;, &#39;cosmxsmi&#39;)){
+  # Extract results for relevant model (exp or sph) and spatial technology
+  # Filter out negative p-values (-9999 for failed models)
+  df_tmp = df_lower_pval %&gt;%
+    filter(st_tech == j) %&gt;%
+    filter(exp_p_val &gt;= 0)
+  
+  # Find lowest p-value to input if zero (-log10 gives Inf if zero)
+  min_pval = min(df_tmp[[&#39;p_val&#39;]][df_tmp[[&#39;p_val&#39;]] != 0], na.rm=T)
+  min_sppval = min(df_tmp[[&#39;exp_p_val&#39;]][df_tmp[[&#39;exp_p_val&#39;]] != 0], na.rm=T)
+  
+  # If p-value is zero, then input the lowest p-value
+  df_tmp = df_tmp %&gt;%
+    mutate(p_val=case_when(p_val == 0 ~ min_pval, TRUE ~ p_val)) %&gt;%
+    mutate(exp_p_val=case_when(exp_p_val == 0 ~ min_sppval, TRUE ~ exp_p_val)) %&gt;%
+    mutate(log_p_val=-log10(p_val)) %&gt;%
+    mutate(log_sp_p_val=-log10(exp_p_val))
+  
+  # Make plot
+  p[[j]] = ggplot(df_tmp) +
+    geom_abline(intercept=0, slope=1, color=&#39;gray70&#39;)
+  
+  # For each sample, determine number of tests and linear model describing trend
+  for(samplename in unique(df_tmp[[&#39;sample&#39;]])){
+    # Get number of tests
+    ntests[[j]] = paste0(ntests[[j]], 
+                         samplename, &#39;(n=&#39;, nrow(df_tmp %&gt;% filter(sample == samplename)), &#39;)\n&#39;)
+    # Estimate intercept and slop for linear models
+    linmod = lm(data=df_tmp %&gt;% filter(sample == samplename), formula=log_sp_p_val~log_p_val)
+    # Add 1:1 line and linear model lines
+    p[[j]] = p[[j]] +
+      geom_abline(intercept=linmod$coefficients[1],
+                  slope=linmod$coefficients[2],
+                  color=col_pal[[j]][names(col_pal[[j]]) == samplename],
+                  linetype=&#39;dashed&#39;, alpha=0.8)
+    
+    rm(linmod) # Clean env
+  }
+  
+  p[[j]] = p[[j]] +
+    geom_point(aes(x=log_p_val, y=log_sp_p_val, fill=sample, color=sample), size=0.5, alpha=0.5, shape=21, stroke=0) +
+    xlab(&#39;-log10(p-value)\nNon-spatial&#39;) +
+    ylab(&#39;-log10(p-value)\nSpatial&#39;) + 
+    labs(color=&#39;&#39;, fill=&#39;&#39;, title=j) +
+    scale_fill_manual(values=col_pal[[j]]) +
+    scale_color_manual(values=col_pal[[j]]) +
+    guides(fill=guide_legend(override.aes=list(size=2, alpha=1), nrow=2, ), 
+           color=&#39;none&#39;) +
+    coord_equal() +
+    theme(panel.background=element_rect(color=&#39;black&#39;, fill=NA), 
+          panel.grid.major=element_line(colour=&quot;gray90&quot;),
+          panel.grid.minor=element_line(colour=NA),
+          panel.ontop=F,
+          legend.position=&quot;bottom&quot;,
+          aspect.ratio=1/1)
+  
+  rm(df_tmp, min_pval, min_sppval) # Clean env
+}
+
+print(ggpubr::ggarrange(p[[&#39;geomx&#39;]] + annotate(&#39;text&#39;, label=ntests[[&#39;geomx&#39;]], x=13, y=3, size=2),
+                        p[[&#39;visium&#39;]] + annotate(&#39;text&#39;, label=ntests[[&#39;visium&#39;]], x=3, y=15, size=2),
+                        p[[&#39;cosmxsmi&#39;]] + annotate(&#39;text&#39;, label=ntests[[&#39;cosmxsmi&#39;]], x=3, y=15, size=2),
+                        ncol=3, nrow=1, legend=&#39;bottom&#39;, align=&#39;h&#39;) +
+        theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, &quot;cm&quot;)))</code></pre>
+<p><img src="figure/diff_expr_spatial_linear_models.Rmd/compare_pval-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>rm(ntests) # Clean env</code></pre>
+<p>The utility of p-values extracted from the spatial models was
+compared with those resulting from the non-spatial models by running
+GSEA on each group of p-values. The p-values were used as ranking
+statistic for the fgsea algorithm. The script to run fgsea is named
+<code>gene_set_enrichment.R</code>.</p>
+<pre class="r"><code># Read fGSEA results
+fgsea_res = readRDS(&#39;data/fgsea_results.RDS&#39;)
+
+# Prepare a single data frame across samples and clusters
+fgsea_df = tibble()
+for(i in names(fgsea_res)){
+  for(cl in names(fgsea_res[[i]])){
+    fgsea_df = bind_rows(fgsea_df, 
+                         fgsea_res[[i]][[cl]] %&gt;%
+                           add_column(samplename=i, .before=1) %&gt;%
+                           add_column(cluster=cl, .after=1))
+  }
+}
+  
+fgsea_long = fgsea_df %&gt;% select(c(&quot;samplename&quot;, &quot;cluster&quot;, &quot;nonsp_pathway&quot;, 
+                                   &quot;nonsp_padj&quot;, &quot;nonsp_NES&quot;, 
+                                   &quot;sp_padj&quot;, &quot;sp_NES&quot;)) %&gt;%
+  pivot_longer(c(&quot;nonsp_NES&quot;, &quot;sp_NES&quot;), values_to=&#39;fgsea_nes&#39;, names_to=&#39;nes_type&#39;) %&gt;%
+  mutate(nes_type=recode(nes_type, nonsp_NES=&#39;non_spatial&#39;, sp_NES=&#39;spatial&#39;) %&gt;%
+           factor(., levels=c(&#39;non_spatial&#39;,&#39;spatial&#39;))) %&gt;%
+  mutate(nonsp_pathway=str_replace(nonsp_pathway, &#39;^HALLMARK_&#39;, &#39;&#39;) %&gt;%
+           str_to_sentence())
+
+bp = list()
+for(i in unique(fgsea_df$samplename)){
+  bp[[i]] = list()
+  for(cl in unique(fgsea_df$cluster)){
+    bp[[i]] = fgsea_long %&gt;%
+      filter(samplename == i) %&gt;%
+      filter(sp_padj &lt; 0.05 | nonsp_padj &lt; 0.05) %&gt;%
+      ggplot(aes(y=reorder(nonsp_pathway, -sp_padj), x=fgsea_nes)) +
+      geom_bar(aes(fill=nes_type), color=&#39;grey10&#39;, stat=&#39;identity&#39;, position=&#39;dodge&#39;) +
+      xlab(&#39;Enrichment score (fgsea NES)&#39;) + ylab(&#39;Hallmark gene set&#39;) +
+      ggtitle(paste0(&#39;Gene set enrichment scores from ranked p-values\nSample: &#39;, i)) +
+      labs(fill=&#39;p-value\nrank&#39;) +
+      scale_fill_manual(values=c(spatial=&#39;gray30&#39;, non_spatial=&#39;white&#39;)) +
+      theme(#axis.text.x=element_text(angle=45, hjust=1, vjust=1),
+            panel.background=element_rect(color=&#39;black&#39;, fill=NULL)) +
+      facet_wrap(~cluster, ncol=4)
+  }
+}
+
+print(bp[[&#39;UKF243&#39;]])</code></pre>
+<p><img src="figure/diff_expr_spatial_linear_models.Rmd/plot_gsea-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, the time taken for each model fitting to be completed is
+plotted. There is a relationship between the number of ROIs/spots/cells
+and the execution time of the model. During the HPC runs, the maximum
+allowed time for a model to be completed was 2 hours.</p>
+<pre class="r"><code># Get number of spots per each sample
+geomx_brain = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/geomx_stlist_w_clusters_soabrain.RDS&#39;)
+geomx_liver = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/geomx_stlist_w_clusters_soaliver.RDS&#39;)
+cosmx_liver = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/smi_stlist_w_clusters_liver.RDS&#39;)
+cosmx_lung = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/smi_stlist_w_clusters_lungcancer.RDS&#39;)
+visium_brain = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/visium_stlist_w_clusters_maynardbrain.RDS&#39;)
+visium_gbm = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/visium_stlist_w_clusters_raviglioblastoma.RDS&#39;)
+
+units_sample = tibble(as_tibble(lapply(geomx_brain@tr_counts, function(i){ncol(i)})),
+                      as_tibble(lapply(geomx_liver@tr_counts, function(i){ncol(i)})),
+                      as_tibble(lapply(cosmx_liver@tr_counts, function(i){ncol(i)})),
+                      as_tibble(lapply(cosmx_lung@tr_counts, function(i){ncol(i)})),
+                      as_tibble(lapply(visium_brain@tr_counts, function(i){ncol(i)})),
+                      as_tibble(lapply(visium_gbm@tr_counts, function(i){ncol(i)}))) %&gt;%
+  t() %&gt;% as.data.frame() %&gt;% rownames_to_column(&#39;sample&#39;) %&gt;% rename(roi_spot_cell=V1)
+
+# Create boxplots of computation time
+df_cp = df_res %&gt;%
+  pivot_longer(c(&#39;nonsp_time_min&#39;, &#39;exp_time_min&#39;), values_to=&#39;exec_time&#39;, names_to=&#39;model&#39;) %&gt;%
+  left_join(., units_sample, by=&#39;sample&#39;) %&gt;%
+  mutate(model=str_replace(model, &#39;_time_min&#39;, &#39;&#39;) %&gt;%
+           paste0(sample, &#39;_&#39;, ., &#39;_&#39;, roi_spot_cell) %&gt;%
+           factor(., levels=c(&quot;hu_brain_001_nonsp_24&quot;, &quot;hu_brain_001_exp_24&quot;, &quot;hu_brain_004a_nonsp_24&quot;, &quot;hu_brain_004a_exp_24&quot;,
+                              &quot;hu_liver_001_nonsp_76&quot;, &quot;hu_liver_001_exp_76&quot;, &quot;hu_liver_002_nonsp_78&quot;, &quot;hu_liver_002_exp_78&quot;, 
+                              &quot;NormalLiver_174_nonsp_1422&quot;, &quot;NormalLiver_174_exp_1422&quot;, &quot;CancerousLiver_366_nonsp_1862&quot;, &quot;CancerousLiver_366_exp_1862&quot;,
+                              &quot;lung6_fov20_nonsp_2395&quot;, &quot;lung6_fov20_exp_2395&quot;, &quot;lung5rep3_fov28_nonsp_3742&quot;, &quot;lung5rep3_fov28_exp_3742&quot;,
+                              &quot;151673_nonsp_3611&quot;, &quot;151673_exp_3611&quot;, &quot;151507_nonsp_4221&quot;, &quot;151507_exp_4221&quot;,
+                              &quot;UKF243_nonsp_1937&quot;, &quot;UKF243_exp_1937&quot;, &quot;UKF275_nonsp_3734&quot;, &quot;UKF275_exp_3734&quot;))) %&gt;%
+  mutate(log_exec_time=log10(exec_time)) 
+
+
+cp = ggplot(df_cp, aes(x=model, y=log_exec_time)) +
+  geom_boxplot(aes(color=sample), outlier.size=0.5) +
+  xlab(NULL) + ylab(&#39;log10(minutes)&#39;) +
+  ggtitle(&#39;Computation time of differential expression tests&#39;) +
+  scale_color_manual(values=c(col_pal[[&#39;visium&#39;]], col_pal[[&#39;geomx&#39;]], col_pal[[&#39;cosmxsmi&#39;]])) +
+  theme(panel.background=element_rect(color=&#39;black&#39;, fill=NULL),
+        axis.text.x=element_text(angle=45, hjust=1, vjust=1))
+
+print(cp)</code></pre>
+<p><img src="figure/diff_expr_spatial_linear_models.Rmd/plot_time-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.2.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] spatialGE_1.2.0 lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1  
+ [5] dplyr_1.1.4     purrr_1.0.2     readr_2.1.4     tidyr_1.3.0    
+ [9] tibble_3.2.1    ggplot2_3.4.4   tidyverse_2.0.0 workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] dotCall64_1.1-1   gtable_0.3.4      spam_2.10-0       xfun_0.41        
+ [5] bslib_0.6.1       rstatix_0.7.2     ggpolypath_0.3.0  processx_3.8.3   
+ [9] lattice_0.21-9    callr_3.7.3       tzdb_0.4.0        vctrs_0.6.5      
+[13] tools_4.3.2       ps_1.7.5          generics_0.1.3    parallel_4.3.2   
+[17] fansi_1.0.6       highr_0.10        pkgconfig_2.0.3   Matrix_1.6-4     
+[21] lifecycle_1.0.4   farver_2.1.1      compiler_4.3.2    git2r_0.33.0     
+[25] fields_15.2       munsell_0.5.0     getPass_0.2-4     carData_3.0-5    
+[29] httpuv_1.6.13     htmltools_0.5.7   maps_3.4.1.1      sass_0.4.8       
+[33] yaml_2.3.8        car_3.1-2         ggpubr_0.6.0      crayon_1.5.2     
+[37] later_1.3.2       pillar_1.9.0      jquerylib_0.1.4   whisker_0.4.1    
+[41] cachem_1.0.8      abind_1.4-5       tidyselect_1.2.0  digest_0.6.33    
+[45] stringi_1.8.3     labeling_0.4.3    cowplot_1.1.1     rprojroot_2.0.4  
+[49] fastmap_1.1.1     grid_4.3.2        colorspace_2.1-0  cli_3.6.2        
+[53] magrittr_2.0.3    utf8_1.2.4        broom_1.0.5       withr_2.5.2      
+[57] backports_1.4.1   scales_1.3.0      promises_1.2.1    bit64_4.0.5      
+[61] timechange_0.2.0  rmarkdown_2.25    httr_1.4.7        bit_4.0.5        
+[65] ggsignif_0.6.4    hms_1.1.3         evaluate_0.23     knitr_1.45       
+[69] viridisLite_0.4.2 rlang_1.1.2       Rcpp_1.0.11       glue_1.6.2       
+[73] rstudioapi_0.15.0 vroom_1.6.5       jsonlite_1.8.8    R6_2.5.1         
+[77] fs_1.6.3         </code></pre>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
