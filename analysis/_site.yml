@@ -1,14 +1,16 @@
-name: "diff_expression_spatial_linear_models"
+name: diff_expression_spatial_linear_models
 output_dir: ../docs
 navbar:
-  title: "diff_expression_spatial_linear_models"
+  title: Spatial linear models for differential expression analysis
   left:
-  - text: Home
-    href: index.html
+  - text: Analysis
+    href: diff_expr_spatial_linear_models.html
   - text: About
     href: about.html
-  - text: License
-    href: license.html
+  right:
+  - icon: fab fa-github
+    text: Source code
+    href: https://github.com/oospina/diff_expression_spatial_linear_models
 output:
   workflowr::wflow_html:
     toc: yes
