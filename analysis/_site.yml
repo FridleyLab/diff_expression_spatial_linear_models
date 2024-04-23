@@ -3,8 +3,10 @@ output_dir: ../docs
 navbar:
   title: Spatial linear models for differential expression analysis
   left:
-  - text: Analysis
+  - text: Manuscript figures
     href: diff_expr_spatial_linear_models.html
+  - text: Example using STdiff
+    href: diff_expr_example_stdiff.html
   - text: About
     href: about.html
   right:

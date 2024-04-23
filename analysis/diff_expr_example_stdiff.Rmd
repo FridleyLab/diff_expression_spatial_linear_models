@@ -1,0 +1,50 @@
+---
+title: "Using the STdiff function from the spatialGE package"
+author: "Oscar E. Ospina, Alex C. Soupir, Roberto Manjarres-Betancur, Guillermo Gonzalez-Calderon, Xiaoqing Yu, Brooke L. Fridley"
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+The `spatialGE` software includes the `STdiff` function to test for differentially expressed genes using spatial covariance structures. The differential expression tests in the [manuscript](https://www.biorxiv.org/content/10.1101/2024.01.20.576348v1)). associated to this website were performed in an HPC environment. Nonetheless, the STdiff algorithm can be run on a laptop computer.
+
+Here an example to run the `STdiff` function is presented on a small subset of genes to reduce computational time. This vignette assumes that an *STlist* object has been already created (click [here](https://fridleylab.github.io/spatialGE/articles/basic_functions_vignette.html) for a tutorial to create an *STlist* object). The *STlist* used here will be the same as in the main vignette generating the figures for the manuscript. 
+
+Users are also encouraged to take a look at the [vignette in the `spatialGE` package](https://fridleylab.github.io/spatialGE/articles/spatial_differential_expression.html).
+
+Load libraries
+
+```{r load_libs}
+library('spatialGE')
+library('tidyverse')
+```
+
+Load *STlist* containing the CosMx-SMI lung cancer data set used in the manuscript.
+
+```{r load_stlist}
+stlist_obj = readRDS('code/diff_expr_hpcrun_spamm/data/smi_stlist_w_clusters_lungcancer.RDS')
+```
+
+In this small example, the `STdiff` fuction will be used to test for differentially expressed genes in tumor cells ("tumor_5") and epithelial cells in the FOV "lung5rep3_fov28". Only the 100 top most variable will be tested using *non-spatial models*. Then, 10% of the differentially expressed genes (i.e., p < 0.05), will be tested using *spatial models*. 
+
+Counts were already transfomed with the `transform_data` function. The `STdiff` function can be directly called on the *STlist* object:
+
+```{r run_stdiff, warning=F}
+degs = STdiff(stlist_obj, # STlist object
+              annot='annots', # Name of the column in stlist_obj@spatial_meta[['lung5rep3_fov28']] containing cell types
+              samples='lung5rep3_fov28', # Name of the sample (i.e., FOV)
+              topgenes=100, # Top variable genes to run non-spatial models
+              sp_topgenes=0.1, # THe percentage of non-spatial DE tests to re-run using spatial models
+              pairwise=T, # Do pairwise comparisons
+              clusters=c('epithelial', 'tumor_5')) # Specific cell types to test
+```
+
+The "exp_adj_p_val" column contains the FDR p-values from the *spatial tests*. The "adj_p_val" contains the FDR p-values from the *non-spatial tests*. The results cna be observed like so:
+
+```{r stdiff_res}
+degs[['lung5rep3_fov28']] %>%
+  filter(!is.na(exp_p_val)) # Show only genes with spatial tests 
+```
+

@@ -12,7 +12,7 @@ Spatial transcriptomics (ST) assays represent a revolution in the way the archit
 
 This workflow presents the code used to generate the results for the manuscript entitled "Differential gene expression analysis of spatial transcriptomic experiments using spatial mixed models" ([pre-print available here](https://www.biorxiv.org/content/10.1101/2024.01.20.576348v1)). Some of the files used to generate these results are included in this repository. However, raw data and heavy files are not included. Those files can be generated again using the scripts in the `code` directory.
 
-The `spatialGE` software includes the `STdiff` function to test for differentially expressed genes using spatial covariance structures. In this paper, the `STdiff` function was not used. Instead, the script of the function was modified to enable execution of Slurm array jobs in a high performance computing (HPC) facility. Nonetheless, the algorithm used here and in `STdiff` are the same, and users are encouraged to run STdiff using the `spatialGE` software.
+The `spatialGE` software includes the `STdiff` function to test for differentially expressed genes using spatial covariance structures. In this paper, the `STdiff` function was not used. Instead, the script of the function was modified to enable execution of Slurm array jobs in a high performance computing (HPC) facility. Nonetheless, the algorithm used here and in `STdiff` are the same, and users are encouraged to run STdiff using the `spatialGE` software. An example to run `STdiff` is presented in the vignette ["Using the STdiff function from the spatialGE package"](https://fridleylab.github.io/diff_expression_spatial_linear_models/diff_expr_example_stdiff.html).
 
 Load `tidyverse` to handle the compiled STdiff results.
 
@@ -49,11 +49,11 @@ df_res = df_res %>%
 
 rm(rand_genes) # Clean env
 
-# Create color palette
+# Color palette created with help of R package Palo
 col_pal = list(
-  geomx=c(hu_brain_001="#AE76A3", hu_brain_004a="#CAE0AB", hu_liver_001="#1965B0", hu_liver_002="#DC050C"),
-  cosmxsmi=c(CancerousLiver_366="#882E72", NormalLiver_174="#E8601C", lung5rep3_fov28="#4EB265", lung6_fov20="#7BAFDE"),
-  visium=c(`151507`="gold3", `151673`="#5289C7", UKF243="#F4A736", UKF275="#D1BBD7")
+  geomx=c(hu_brain_001="#4477AA", hu_brain_004a="#CCBB44", hu_liver_001="#EE6677", hu_liver_002="#228833"),
+  visium=c(`151507`="gold", `151673`="#DC050C", UKF243="#1965B0", UKF275="#4EB265"),
+  cosmxsmi=c(CancerousLiver_366="#7E1900", NormalLiver_174="#D9D26A", lung5rep3_fov28="#60C3D4", lung6_fov20="#1A3399")
 )
 ```
 
@@ -132,7 +132,7 @@ rm(gene_meta_df) # Clean env
 
 # Make plot
 p = ggplot(df_res_aic, aes(x=sample_gene_mean_cat, y=n_tests)) +
-  geom_bar(aes(fill=sample, alpha=best_model, color=sample), stat="identity", position='stack', size=0.5) +
+  geom_bar(aes(fill=sample, alpha=best_model, color=sample), stat="identity", position='stack', linewidth=0.5) +
   geom_text(aes(label=n_tests, y=lab_pos), color=rep(c('gray40', 'gray40', 'black', 'black'), 12), size=2) +
   scale_color_manual(values=c(col_pal[['visium']], col_pal[['geomx']], col_pal[['cosmxsmi']])) +
   scale_fill_manual(values=c(col_pal[['visium']], col_pal[['geomx']], col_pal[['cosmxsmi']])) +
@@ -186,7 +186,7 @@ for(j in c('geomx', 'visium', 'cosmxsmi')){
   
   # Make plot
   p[[j]] = ggplot(df_tmp) +
-    geom_abline(intercept=0, slope=1, color='gray70')
+    geom_abline(intercept=0, slope=1, color='gray70', linewidth=0.6)
   
   # For each sample, determine number of tests and linear model describing trend
   for(samplename in unique(df_tmp[['sample']])){
@@ -200,7 +200,7 @@ for(j in c('geomx', 'visium', 'cosmxsmi')){
       geom_abline(intercept=linmod$coefficients[1],
                   slope=linmod$coefficients[2],
                   color=col_pal[[j]][names(col_pal[[j]]) == samplename],
-                  linetype='dashed', alpha=0.8)
+                  linetype='dashed', alpha=0.8, linewidth=0.6)
     
     rm(linmod) # Clean env
   }
@@ -212,8 +212,7 @@ for(j in c('geomx', 'visium', 'cosmxsmi')){
     labs(color='', fill='', title=j) +
     scale_fill_manual(values=col_pal[[j]]) +
     scale_color_manual(values=col_pal[[j]]) +
-    guides(fill=guide_legend(override.aes=list(size=2, alpha=1), nrow=2, ), 
-           color='none') +
+    guides(fill=guide_legend(override.aes=list(size=2, alpha=1), nrow=2), color='none') +
     coord_equal() +
     theme(panel.background=element_rect(color='black', fill=NA), 
           panel.grid.major=element_line(colour="gray90"),
@@ -273,8 +272,7 @@ for(i in unique(fgsea_df$samplename)){
       ggtitle(paste0('Gene set enrichment scores from ranked p-values\nSample: ', i)) +
       labs(fill='p-value\nrank') +
       scale_fill_manual(values=c(spatial='gray30', non_spatial='white')) +
-      theme(#axis.text.x=element_text(angle=45, hjust=1, vjust=1),
-            panel.background=element_rect(color='black', fill=NULL)) +
+      theme(panel.background=element_rect(color='black', fill=NULL)) +
       facet_wrap(~cluster, ncol=4)
   }
 }
@@ -324,5 +322,131 @@ cp = ggplot(df_cp, aes(x=model, y=log_exec_time)) +
   theme(panel.background=element_rect(color='black', fill=NULL),
         axis.text.x=element_text(angle=45, hjust=1, vjust=1))
 
+rm(list=grep('^col_pal$|^geomx_|^visium|^cosmx_|df_res$|^cp$', ls(), value=T, invert=T)) # Clean env
+
 print(cp)
 ```
+
+A comparison between non-spatial and spatial tests was done among three cell types in each of the CosMx-SMI data sets. It was noticed, however, that the number of cells in each cluster has an effect on the power of spatial covariances to accurately correct for the excess of small p-values.
+
+```{r pairwise_tests}
+# Plot scatter plot of pairwise tests comparing non-spatial and spatial p-values from 
+# cell type specific pairwise tests
+fp = 'code/stdiff_hpcrun_spamm_pairwise_tests/code/spatial_pairwise_test_all_compiled.csv'
+df_pw_res = read_delim(fp, delim=',', show_col_types=F) %>%
+  mutate(st_tech=recode(st_tech, smi='cosmxsmi'))
+
+# Join tables with cell type assignemts to make barplots
+celltypes = bind_rows(cosmx_liver@spatial_meta[[1]] %>% add_column(sample_id=names(cosmx_liver@spatial_meta[1])), 
+                      cosmx_liver@spatial_meta[[2]] %>% add_column(sample_id=names(cosmx_liver@spatial_meta[2])), 
+                      cosmx_lung@spatial_meta[[1]] %>% add_column(sample_id=names(cosmx_lung@spatial_meta[1])),
+                      cosmx_lung@spatial_meta[[2]] %>% add_column(sample_id=names(cosmx_lung@spatial_meta[2]))) %>%
+  select(c('sample_id', 'annots')) %>%
+  mutate(annots=case_when(str_detect(annots, 'hep_') ~ 'hep', TRUE ~ annots)) %>%
+  mutate(annots=case_when(str_detect(annots, 'tumor_') ~ 'tumor', 
+                          str_detect(annots, 't_|treg') ~ 't_cell',
+                          TRUE ~ annots)) %>%
+  group_by(sample_id, annots) %>%
+  summarize(ncells=n()) 
+
+# Create -log10 p-values scatterplot
+cls = unique(c(df_pw_res[['cluster1']], df_pw_res[['cluster2']]))
+p = list()
+bp = list()
+ntests = list()
+for(i in cls){
+  for(j in cls){
+    # Extract results for relevant cell types
+    # Filter out negative p-values (-9999 for failed models)
+    df_tmp = df_pw_res %>%
+      filter( (cluster1 == i & cluster2 == j) | (cluster1 == j & cluster2 == i) ) %>%
+      filter(exp_p_val >= 0)
+    
+    # Some cell type combinations belong to different samples and results do not exist
+    if( nrow(df_tmp) > 0 & !(paste0(i, '_vs_', j) %in% names(p)) & !(paste0(j, '_vs_', i) %in% names(p)) & (i != j) ){
+      # Find lowest p-value to input if zero (-log10 gives Inf if zero)
+      min_pval = min(df_tmp[['p_val']][df_tmp[['p_val']] != 0], na.rm=T)
+      min_sppval = min(df_tmp[['exp_p_val']][df_tmp[['exp_p_val']] != 0], na.rm=T)
+      
+      # If p-value is zero, then input the lowest p-value
+      df_tmp = df_tmp %>%
+        mutate(p_val=case_when(p_val == 0 ~ min_pval, TRUE ~ p_val)) %>%
+        mutate(exp_p_val=case_when(exp_p_val == 0 ~ min_sppval, TRUE ~ exp_p_val)) %>%
+        mutate(log_p_val=-log10(p_val)) %>%
+        mutate(log_sp_p_val=-log10(exp_p_val))
+      
+      # Make plot
+      p[[paste0(i, '_vs_', j)]] = ggplot(df_tmp) +
+        geom_abline(intercept=0, slope=1, color='gray70')
+      
+      # For each sample, determine number of tests and linear model describing trend
+      for(samplename in unique(df_tmp[['sample']])){
+        # Get number of tests
+        ntests[[paste0(i, '_vs_', j)]] = paste0(ntests[[paste0(i, '_vs_', j)]], 
+                                                samplename, '(n=', nrow(df_tmp %>% filter(sample == samplename)), ')\n')
+        # Estimate intercept and slop for linear models
+        linmod = lm(data=df_tmp %>% filter(sample == samplename), formula=log_sp_p_val~log_p_val)
+        # Add 1:1 line and linear model lines
+        p[[paste0(i, '_vs_', j)]] = p[[paste0(i, '_vs_', j)]] +
+          geom_abline(intercept=linmod$coefficients[1],
+                      slope=linmod$coefficients[2],
+                      color=col_pal[['cosmxsmi']][names(col_pal[['cosmxsmi']]) == samplename],
+                      linetype='dashed', alpha=0.8)
+        
+        rm(linmod) # Clean env
+      }
+      
+      # Complete plot
+      p[[paste0(i, '_vs_', j)]] = p[[paste0(i, '_vs_', j)]] +
+        geom_point(aes(x=log_p_val, y=log_sp_p_val, fill=sample, color=sample), size=1, alpha=0.5, shape=21, stroke=0) +
+        xlab('-log10(p-value)\nNon-spatial') +
+        ylab('-log10(p-value)\nSpatial') + 
+        labs(color='', fill='', title=paste0(i, '\n', j)) +
+        scale_fill_manual(values=col_pal[['cosmxsmi']]) +
+        scale_color_manual(values=col_pal[['cosmxsmi']]) +
+        guides(fill=guide_legend(override.aes=list(size=2, alpha=1), nrow=1), color='none') +
+        coord_equal() +
+        theme(panel.background=element_rect(color='black', fill=NA), 
+              panel.grid.major=element_line(colour="gray90"),
+              panel.grid.minor=element_line(colour=NA),
+              panel.ontop=F,
+              legend.position="bottom",
+              aspect.ratio=1/1)
+      
+      rm(min_pval, min_sppval) # Clean env
+      
+      # Make barplot with number of cells per cell type in pairwise comparison
+      celltypes_tmp = celltypes %>% filter(sample_id %in% unique(df_tmp[['sample']])) %>% filter(annots %in% c(i, j))
+      bp[[paste0(i, '_vs_', j)]] = ggplot(celltypes_tmp) +
+        geom_bar(aes(y=ncells, x=sample_id, color=sample_id, fill=annots), stat='identity', position="dodge", size=1) +
+        labs(x=NULL, y='Number of cells', title=paste0(i, '\n', j), fill='') +
+        scale_fill_manual(values=c('white', 'gray50')) +
+        scale_color_manual(values=col_pal[['cosmxsmi']]) +
+        guides(fill=guide_legend(override.aes=list(size=2, alpha=1), nrow=1), color='none') +
+        theme(panel.background=element_rect(color='black', fill=NA), 
+              panel.grid.major=element_line(colour="gray90"),
+              panel.grid.minor=element_line(colour=NA),
+              legend.position="bottom")
+      
+      rm(celltypes_tmp) # Clean env
+    }
+    rm(df_tmp) # Clean env
+  }
+}
+
+print(ggpubr::ggarrange(p[['hep_vs_non_inflammatory_macrophages']] + annotate('text', label=ntests[['hep_vs_non_inflammatory_macrophages']], x=13, y=3, size=2),
+                        p[['t_cell_vs_macrophage']] + annotate('text', label=ntests[['t_cell_vs_macrophage']], x=3, y=15, size=2),
+                        bp[['hep_vs_non_inflammatory_macrophages']],
+                        bp[['t_cell_vs_macrophage']],
+                        p[['hep_vs_stellate_cells']] + annotate('text', label=ntests[['hep_vs_stellate_cells']], x=3, y=15, size=2),
+                        p[['tumor_vs_macrophage']] + annotate('text', label=ntests[['tumor_vs_macrophage']], x=3, y=15, size=2),
+                        bp[['hep_vs_stellate_cells']],
+                        bp[['tumor_vs_macrophage']],
+                        p[['non_inflammatory_macrophages_vs_stellate_cells']] + annotate('text', label=ntests[['non_inflammatory_macrophages_vs_stellate_cells']], x=3, y=15, size=2),
+                        p[['t_cell_vs_tumor']] + annotate('text', label=ntests[['tumor_vs_t_cell']], x=3, y=15, size=2),
+                        bp[['non_inflammatory_macrophages_vs_stellate_cells']],
+                        bp[['t_cell_vs_tumor']],
+                        ncol=4, nrow=3, legend='bottom', align='h') +
+        theme(plot.margin=margin(0.1, 0.1, 0.1, 0.1, "cm")))
+```
+

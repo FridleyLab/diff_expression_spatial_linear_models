@@ -9,9 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Oscar E. Ospina, Alex C. Soupir, Roberto Manjarres-Betancur, Guillermo Gonzalez-Calderon, Xiaoqing Yu, Brooke L. Fridley" />
 
 
-<title>About</title>
+<title>Using the STdiff function from the spatialGE package</title>
 
 <script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -281,7 +282,11 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">About</h1>
+<h1 class="title toc-ignore">Using the STdiff function from the
+spatialGE package</h1>
+<h4 class="author">Oscar E. Ospina, Alex C. Soupir, Roberto
+Manjarres-Betancur, Guillermo Gonzalez-Calderon, Xiaoqing Yu, Brooke L.
+Fridley</h4>
 
 </div>
 
@@ -314,7 +319,7 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span> 1
 </p>
@@ -349,12 +354,96 @@ changes </a>
 <div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
 <code>wflow_publish</code> to commit the R Markdown file and build the
 HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240118code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240118)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240118code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240118)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
@@ -467,32 +556,146 @@ There are no past versions. Publish this analysis with
 </div>
 </div>
 </div>
-<p>This repository contains code to reproduce the figures in the
-manuscript entitled “Differential gene expression analysis of spatial
-transcriptomic experiments using spatial mixed models” (<a
-href="https://www.biorxiv.org/content/10.1101/2024.01.20.576348v1">pre-print
-available here</a>). The contents of the repository are briefly detailed
-here:</p>
-<ul>
-<li><code>analysis/diff_expr_spatial_linear_models.Rmd</code>: Script to
-generate the figures presented in the manuscript.</li>
-<li><code>code/prepare_data_hpcrun_*</code>: Scripts to create STlist
-(spatialGE object) and list of genes x cluster combinations to run
-STdiff in an HPC environment.</li>
-<li><code>code/gene_set_enrichment.R*</code>: Script calculate GSEA
-scores using p-value-ranked genes and the <code>fgsea</code>
-package.</li>
-<li><code>code/diff_expr_hpcrun_spamm/spatial_model_tests_spamm.R</code>:
-The STdiff algorithm, modified to be compatible with Slurm array job
-submission.</li>
-<li><code>code/diff_expr_hpcrun_spamm/spatial_model_tests_spamm_pairwise_tests</code>:
-The STdiff algorithm to perform cell type pairwise tests, modified to be
-compatible with Slurm array job submission.</li>
-<li><code>code/diff_expr_hpcrun_spamm/runslurm_hpc_stdiff_*</code>:
-Example Slurm scripts to submit model tests to an HPC environment.</li>
-<li><code>code/diff_expr_hpcrun_spamm/compile_all_results.R</code>: An R
-script to compile into a table the results of the model tests.</li>
-</ul>
+<p>The <code>spatialGE</code> software includes the <code>STdiff</code>
+function to test for differentially expressed genes using spatial
+covariance structures. The differential expression tests in the <a
+href="https://www.biorxiv.org/content/10.1101/2024.01.20.576348v1">manuscript</a>).
+associated to this website were performed in an HPC environment.
+Nonetheless, the STdiff algorithm can be run on a laptop computer.</p>
+<p>Here an example to run the <code>STdiff</code> function is presented
+on a small subset of genes to reduce computational time. This vignette
+assumes that an <em>STlist</em> object has been already created (click
+<a
+href="https://fridleylab.github.io/spatialGE/articles/basic_functions_vignette.html">here</a>
+for a tutorial to create an <em>STlist</em> object). The <em>STlist</em>
+used here will be the same as in the main vignette generating the
+figures for the manuscript.</p>
+<p>Users are also encouraged to take a look at the <a
+href="https://fridleylab.github.io/spatialGE/articles/spatial_differential_expression.html">vignette
+in the <code>spatialGE</code> package</a>.</p>
+<p>Load libraries</p>
+<pre class="r"><code>library(&#39;spatialGE&#39;)
+library(&#39;tidyverse&#39;)</code></pre>
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<p>Load <em>STlist</em> containing the CosMx-SMI lung cancer data set
+used in the manuscript.</p>
+<pre class="r"><code>stlist_obj = readRDS(&#39;code/diff_expr_hpcrun_spamm/data/smi_stlist_w_clusters_lungcancer.RDS&#39;)</code></pre>
+<p>In this small example, the <code>STdiff</code> fuction will be used
+to test for differentially expressed genes in tumor cells (“tumor_5”)
+and epithelial cells in the FOV “lung5rep3_fov28”. Only the 100 top most
+variable will be tested using <em>non-spatial models</em>. Then, 10% of
+the differentially expressed genes (i.e., p &lt; 0.05), will be tested
+using <em>spatial models</em>.</p>
+<p>Counts were already transfomed with the <code>transform_data</code>
+function. The <code>STdiff</code> function can be directly called on the
+<em>STlist</em> object:</p>
+<pre class="r"><code>degs = STdiff(stlist_obj, # STlist object
+              annot=&#39;annots&#39;, # Name of the column in stlist_obj@spatial_meta[[&#39;lung5rep3_fov28&#39;]] containing cell types
+              samples=&#39;lung5rep3_fov28&#39;, # Name of the sample (i.e., FOV)
+              topgenes=100, # Top variable genes to run non-spatial models
+              sp_topgenes=0.1, # THe percentage of non-spatial DE tests to re-run using spatial models
+              pairwise=T, # Do pairwise comparisons
+              clusters=c(&#39;epithelial&#39;, &#39;tumor_5&#39;)) # Specific cell types to test</code></pre>
+<pre><code>Testing metadata: annots...
+    Running non-spatial mixed models...</code></pre>
+<pre><code>Registered S3 methods overwritten by &#39;registry&#39;:
+  method               from 
+  print.registry_field proxy
+  print.registry_entry proxy</code></pre>
+<pre><code>    Completed non-spatial mixed models (0.13 min).
+    Running spatial tests...</code></pre>
+<pre><code>Using paralellisation might be useful. See help(&quot;setNBThreads&quot;)</code></pre>
+<pre><code>Using paralellisation might be useful. See help(&quot;setNBThreads&quot;)
+Using paralellisation might be useful. See help(&quot;setNBThreads&quot;)
+Using paralellisation might be useful. See help(&quot;setNBThreads&quot;)
+Using paralellisation might be useful. See help(&quot;setNBThreads&quot;)
+Using paralellisation might be useful. See help(&quot;setNBThreads&quot;)</code></pre>
+<pre><code>
+    Completed spatial mixed models (3.75 min).
+STdiff completed in 3.95 min.</code></pre>
+<p>The “exp_adj_p_val” column contains the FDR p-values from the
+<em>spatial tests</em>. The “adj_p_val” contains the FDR p-values from
+the <em>non-spatial tests</em>. The results cna be observed like so:</p>
+<pre class="r"><code>degs[[&#39;lung5rep3_fov28&#39;]] %&gt;%
+  filter(!is.na(exp_p_val)) # Show only genes with spatial tests </code></pre>
+<pre><code># A tibble: 6 × 10
+  sample       gene  avg_log2fc cluster_1 cluster_2 mm_p_val adj_p_val exp_p_val
+  &lt;chr&gt;        &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 lung5rep3_f… OLFM4       4.62 tumor_5   epitheli…        0         0  0       
+2 lung5rep3_f… CEAC…       3.36 tumor_5   epitheli…        0         0  0       
+3 lung5rep3_f… CXCL5       2.51 tumor_5   epitheli…        0         0  0       
+4 lung5rep3_f… KRT19       2.20 tumor_5   epitheli…        0         0  0       
+5 lung5rep3_f… KRT17       2.16 tumor_5   epitheli…        0         0  0       
+6 lung5rep3_f… DMBT1       3.03 tumor_5   epitheli…        0         0  1.01e-13
+# ℹ 2 more variables: exp_adj_p_val &lt;dbl&gt;, comments &lt;chr&gt;</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.4.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/New_York
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4    
+ [5] purrr_1.0.2     readr_2.1.4     tidyr_1.3.0     tibble_3.2.1   
+ [9] ggplot2_3.5.0   tidyverse_2.0.0 spatialGE_1.2.0 workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] dotCall64_1.1-1     gtable_0.3.4        spam_2.10-0        
+ [4] xfun_0.41           bslib_0.6.1         ggpolypath_0.3.0   
+ [7] processx_3.8.3      lattice_0.21-9      numDeriv_2016.8-1.1
+[10] callr_3.7.3         tzdb_0.4.0          vctrs_0.6.5        
+[13] tools_4.3.2         ps_1.7.5            generics_0.1.3     
+[16] parallel_4.3.2      proxy_0.4-27        fansi_1.0.6        
+[19] pkgconfig_2.0.3     Matrix_1.6-4        checkmate_2.3.1    
+[22] lifecycle_1.0.4     compiler_4.3.2      git2r_0.33.0       
+[25] fields_15.2         munsell_0.5.0       getPass_0.2-4      
+[28] httpuv_1.6.13       htmltools_0.5.7     maps_3.4.1.1       
+[31] sass_0.4.8          yaml_2.3.8          nloptr_2.0.3       
+[34] crayon_1.5.2        later_1.3.2         pillar_1.9.0       
+[37] jquerylib_0.1.4     whisker_0.4.1       MASS_7.3-60        
+[40] cachem_1.0.8        boot_1.3-28.1       nlme_3.1-163       
+[43] spaMM_4.4.0         tidyselect_1.2.0    digest_0.6.33      
+[46] slam_0.1-50         stringi_1.8.3       rprojroot_2.0.4    
+[49] fastmap_1.1.1       grid_4.3.2          colorspace_2.1-0   
+[52] cli_3.6.2           magrittr_2.0.3      utf8_1.2.4         
+[55] withr_2.5.2         backports_1.4.1     scales_1.3.0       
+[58] promises_1.2.1      registry_0.5-1      timechange_0.2.0   
+[61] rmarkdown_2.25      httr_1.4.7          hms_1.1.3          
+[64] ROI_1.0-1           pbapply_1.7-2       evaluate_0.23      
+[67] knitr_1.45          viridisLite_0.4.2   rlang_1.1.2        
+[70] Rcpp_1.0.11         glue_1.6.2          minqa_1.2.6        
+[73] rstudioapi_0.15.0   jsonlite_1.8.8      R6_2.5.1           
+[76] fs_1.6.3           </code></pre>
+</div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
