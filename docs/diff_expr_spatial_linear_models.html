@@ -450,15 +450,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomoospinadiffexpressionspatiallinearmodelstree47334f474a7a384ea3a884084d6091a250dd65cbtargetblank47334f4a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomoospinadiffexpressionspatiallinearmodelstreee107cd4a27c6156fd20e52e4a09f3272afdb482ftargetblanke107cd4a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/oospina/diff_expression_spatial_linear_models/tree/47334f474a7a384ea3a884084d6091a250dd65cb" target="_blank">47334f4</a>
+<a href="https://github.com/oospina/diff_expression_spatial_linear_models/tree/e107cd4a27c6156fd20e52e4a09f3272afdb482f" target="_blank">e107cd4</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomoospinadiffexpressionspatiallinearmodelstree47334f474a7a384ea3a884084d6091a250dd65cbtargetblank47334f4a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomoospinadiffexpressionspatiallinearmodelstreee107cd4a27c6156fd20e52e4a09f3272afdb482ftargetblanke107cd4a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -468,7 +468,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/oospina/diff_expression_spatial_linear_models/tree/47334f474a7a384ea3a884084d6091a250dd65cb" target="_blank">47334f4</a>.
+<a href="https://github.com/oospina/diff_expression_spatial_linear_models/tree/e107cd4a27c6156fd20e52e4a09f3272afdb482f" target="_blank">e107cd4</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -501,6 +501,8 @@ Ignored files:
     Ignored:    code/diff_expr_hpcrun_spamm/data/visium_stlist_w_clusters_maynardbrain.RDS
     Ignored:    code/diff_expr_hpcrun_spamm/data/visium_stlist_w_clusters_raviglioblastoma.RDS
     Ignored:    code/diff_expr_hpcrun_spamm/results/
+    Ignored:    code/stdiff_hpcrun_spamm_pairwise_tests/.DS_Store
+    Ignored:    code/stdiff_hpcrun_spamm_pairwise_tests/results/
     Ignored:    data/.DS_Store
     Ignored:    data/cosmx_smi_liver_nanostring/
     Ignored:    data/cosmx_smi_lung_nsclc_nanostring/
@@ -509,31 +511,8 @@ Ignored files:
     Ignored:    data/ravi_2022_glioblastoma/
     Ignored:    data/ravi_gbm_spata_objects/
 
-Untracked files:
-    Untracked:  analysis/diff_expr_example_stdiff.Rmd
-    Untracked:  code/prepare_data_hpcrun_cosmxsmi_liver.R
-    Untracked:  code/prepare_data_hpcrun_cosmxsmi_liver_pairwise_tests.R
-    Untracked:  code/prepare_data_hpcrun_cosmxsmi_lungcancer.R
-    Untracked:  code/prepare_data_hpcrun_cosmxsmi_lungcancer_pairwise_tests.R
-    Untracked:  code/prepare_data_hpcrun_geomx_soabrain.R
-    Untracked:  code/prepare_data_hpcrun_geomx_soaliver.R
-    Untracked:  code/stdiff_hpcrun_spamm_pairwise_tests/
-
 Unstaged changes:
-    Modified:   analysis/_site.yml
-    Modified:   analysis/about.Rmd
     Modified:   analysis/diff_expr_spatial_linear_models.Rmd
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_cosmxsmi_liver_1_5500.sh
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_cosmxsmi_luncancer_1_7500.sh
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_geomx_soabrain_1_12500.sh
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_geomx_soaliver_1_20000.sh
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_visium_maynardbrain_1_14000.sh
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_visium_raviglioblastoma_1_10000.sh
-    Modified:   code/diff_expr_hpcrun_spamm/code/runslurm_hpc_stdiff_visium_raviglioblastoma_hallmark_1_8000.sh
-    Deleted:    code/prepare_data_sets_hpcrun_cosmxsmi_liver.R
-    Deleted:    code/prepare_data_sets_hpcrun_cosmxsmi_lungcancer.R
-    Deleted:    code/prepare_data_sets_hpcrun_geomx_soabrain.R
-    Deleted:    code/prepare_data_sets_hpcrun_geomx_soaliver.R
 
 </code></pre>
 <p>
@@ -814,7 +793,7 @@ print(ggpubr::ggarrange(p[[&#39;geomx&#39;]] + annotate(&#39;text&#39;, label=nt
                         p[[&#39;cosmxsmi&#39;]] + annotate(&#39;text&#39;, label=ntests[[&#39;cosmxsmi&#39;]], x=3, y=15, size=2),
                         ncol=3, nrow=1, legend=&#39;bottom&#39;, align=&#39;h&#39;) +
         theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, &quot;cm&quot;)))</code></pre>
-<p><img src="figure/diff_expr_spatial_linear_models.Rmd/compare_pval-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/diff_expr_spatial_linear_models.Rmd/compare_pval-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>rm(ntests) # Clean env</code></pre>
 <p>The utility of p-values extracted from the spatial models was
 compared with those resulting from the non-spatial models by running
@@ -1039,7 +1018,7 @@ generated.</code></pre>
                         bp[[&#39;t_cell_vs_tumor&#39;]],
                         ncol=4, nrow=3, legend=&#39;bottom&#39;, align=&#39;h&#39;) +
         theme(plot.margin=margin(0.1, 0.1, 0.1, 0.1, &quot;cm&quot;)))</code></pre>
-<p><img src="figure/diff_expr_spatial_linear_models.Rmd/pairwise_tests-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/diff_expr_spatial_linear_models.Rmd/pairwise_tests-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

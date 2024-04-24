@@ -151,7 +151,7 @@ print(p)
 
 To assess the level of significant p-value inflation, the log10(p-value) of each alternative (spatial/non-spatial) is compared for each gene x cluster combination.
 
-```{r compare_pval}
+```{r compare_pval, fig.width=12, fig.height=5}
 # Find larger p-value
 df_lower_pval = df_res %>%
   mutate(lower_p=case_when(p_val > exp_p_val ~ 'non_spatial',
@@ -329,7 +329,7 @@ print(cp)
 
 A comparison between non-spatial and spatial tests was done among three cell types in each of the CosMx-SMI data sets. It was noticed, however, that the number of cells in each cluster has an effect on the power of spatial covariances to accurately correct for the excess of small p-values.
 
-```{r pairwise_tests}
+```{r pairwise_tests, fig.width=12, fig.height=12}
 # Plot scatter plot of pairwise tests comparing non-spatial and spatial p-values from 
 # cell type specific pairwise tests
 fp = 'code/stdiff_hpcrun_spamm_pairwise_tests/code/spatial_pairwise_test_all_compiled.csv'
