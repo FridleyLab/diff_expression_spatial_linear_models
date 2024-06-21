@@ -8,7 +8,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-The `spatialGE` software includes the `STdiff` function to test for differentially expressed genes using spatial covariance structures. The differential expression tests in the [manuscript](https://www.biorxiv.org/content/10.1101/2024.01.20.576348v1)). associated to this website were performed in an HPC environment. Nonetheless, the STdiff algorithm can be run on a laptop computer.
+The `spatialGE` software includes the `STdiff` function to test for differentially expressed genes using spatial covariance structures. The differential expression tests in the [manuscript](https://www.nature.com/articles/s41598-024-61758-0) associated with this website were performed in an HPC environment. Nonetheless, the STdiff algorithm can be run on a laptop computer.
 
 Here an example to run the `STdiff` function is presented on a small subset of genes to reduce computational time. This vignette assumes that an *STlist* object has been already created (click [here](https://fridleylab.github.io/spatialGE/articles/basic_functions_vignette.html) for a tutorial to create an *STlist* object). The *STlist* used here will be the same as in the main vignette generating the figures for the manuscript. 
 
